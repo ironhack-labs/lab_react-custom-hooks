@@ -1,4 +1,5 @@
 # lab_react-custom-hooks
+
 ![logo_ironhack_blue 7](https://user-images.githubusercontent.com/23629340/40541063-a07a0a8a-601a-11e8-91b5-2f13e4e6b441.png)
 
 # LAB | React Custom Hooks
@@ -68,10 +69,10 @@ This exercise is split into multiple iterations:
 
 First, let's create our React project and see the problem we're trying to solve.
 
-1.  **Create a React Project**: Open your terminal, navigate to the directory where you want to store your project, and run the following command to create a new React project with TypeScript using Vite.
+1.  **Create a React Project**: Open your terminal, navigate to the directory where you want to store your project, and run the following command to create a new React project with JavaScript using Vite.
 
     ```shell
-    $ npm create vite@latest lab-react-custom-hooks -- --template react-ts
+    $ npm create vite@latest lab-react-custom-hooks -- --template react
     ```
 
     When prompted, navigate into the new directory: `cd lab-react-custom-hooks`.
@@ -84,36 +85,27 @@ First, let's create our React project and see the problem we're trying to solve.
 
 3.  **Clean Up**: Open the project in VS Code. Delete the contents of `App.css` and `index.css`. Also, delete the `assets` folder. We want to start fresh.
 
-4.  **Create Components**: Inside the `src` folder, create a new folder called `components`. Inside `src/components`, create two files: `PublicGists.tsx` and `UserGists.tsx`.
+4.  **Create Components**: Inside the `src` folder, create a new folder called `components`. Inside `src/components`, create two files: `PublicGists.jsx` and `UserGists.jsx`.
 
-5.  **Build `PublicGists.tsx`**: This component will fetch and display a list of public GitHub Gists. Copy the following code into `src/components/PublicGists.tsx`:
+5.  **Build `PublicGists.jsx`**: This component will fetch and display a list of public GitHub Gists. Copy the following code into `src/components/PublicGists.jsx`:
 
-    ```typescript
-    // src/components/PublicGists.tsx
-    import { useState, useEffect } from "react";
-    import axios from "axios";
-
-    // Define the type for a single Gist object
-    interface Gist {
-      id: string;
-      html_url: string;
-      description: string;
-    }
+    ```jsx
+    // src/components/PublicGists.jsx
+    import { useState, useEffect } from 'react';
+    import axios from 'axios';
 
     const PublicGists = () => {
-      const [gists, setGists] = useState<Gist[]>([]);
+      const [gists, setGists] = useState([]);
       const [loading, setLoading] = useState(true);
-      const [error, setError] = useState<Error | null>(null);
+      const [error, setError] = useState(null);
 
       useEffect(() => {
         const fetchGists = async () => {
           try {
-            const response = await axios.get<Gist[]>(
-              "https://api.github.com/gists/public"
-            );
+            const response = await axios.get('https://api.github.com/gists/public');
             setGists(response.data);
           } catch (err) {
-            setError(err as Error);
+            setError(err);
           } finally {
             setLoading(false);
           }
@@ -129,14 +121,10 @@ First, let's create our React project and see the problem we're trying to solve.
         <div>
           <h2>Public Gists</h2>
           <ul>
-            {gists.map((gist) => (
+            {gists.map(gist => (
               <li key={gist.id}>
-                <a
-                  href={gist.html_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {gist.description || "No description"}
+                <a href={gist.html_url} target="_blank" rel="noopener noreferrer">
+                  {gist.description || 'No description'}
                 </a>
               </li>
             ))}
@@ -148,34 +136,26 @@ First, let's create our React project and see the problem we're trying to solve.
     export default PublicGists;
     ```
 
-6.  **Build `UserGists.tsx`**: This component does almost the same thing, but fetches Gists for a specific user. Notice how similar the logic is. This is the code duplication we want to fix. Copy this code into `src/components/UserGists.tsx`:
+6.  **Build `UserGists.jsx`**: This component does almost the same thing, but fetches Gists for a specific user. Notice how similar the logic is. This is the code duplication we want to fix. Copy this code into `src/components/UserGists.jsx`:
 
-    ```typescript
-    // src/components/UserGists.tsx
-    import { useState, useEffect } from "react";
-    import axios from "axios";
-
-    interface Gist {
-      id: string;
-      html_url: string;
-      description: string;
-    }
+    ```jsx
+    // src/components/UserGists.jsx
+    import { useState, useEffect } from 'react';
+    import axios from 'axios';
 
     const UserGists = () => {
-      const [gists, setGists] = useState<Gist[]>([]);
+      const [gists, setGists] = useState([]);
       const [loading, setLoading] = useState(true);
-      const [error, setError] = useState<Error | null>(null);
-      const username = "gaearon"; // A famous React developer!
+      const [error, setError] = useState(null);
+      const username = 'gaearon'; // A famous React developer!
 
       useEffect(() => {
         const fetchGists = async () => {
           try {
-            const response = await axios.get<Gist[]>(
-              `https://api.github.com/users/${username}/gists`
-            );
+            const response = await axios.get(`https://api.github.com/users/${username}/gists`);
             setGists(response.data);
           } catch (err) {
-            setError(err as Error);
+            setError(err);
           } finally {
             setLoading(false);
           }
@@ -191,14 +171,10 @@ First, let's create our React project and see the problem we're trying to solve.
         <div>
           <h2>{username}'s Gists</h2>
           <ul>
-            {gists.map((gist) => (
+            {gists.map(gist => (
               <li key={gist.id}>
-                <a
-                  href={gist.html_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {gist.description || "No description"}
+                <a href={gist.html_url} target="_blank" rel="noopener noreferrer">
+                  {gist.description || 'No description'}
                 </a>
               </li>
             ))}
@@ -210,12 +186,12 @@ First, let's create our React project and see the problem we're trying to solve.
     export default UserGists;
     ```
 
-7.  **Update `App.tsx`**: Finally, let's render these two components in our main `App` component. Replace the content of `src/App.tsx` with this:
+7.  **Update `App.jsx`**: Finally, let's render these two components in our main `App` component. Replace the content of `src/App.jsx` with this:
 
-    ```typescript
-    // src/App.tsx
-    import PublicGists from "./components/PublicGists";
-    import UserGists from "./components/UserGists";
+    ```jsx
+    // src/App.jsx
+    import PublicGists from './components/PublicGists';
+    import UserGists from './components/UserGists';
 
     function App() {
       return (
@@ -244,43 +220,42 @@ Now for the fun part! Let's extract the duplicated logic into a reusable custom 
 
 #### `useFetch` Hook Requirements
 
-1.  **Create the file**: Inside the `src` folder, create a new folder named `hooks`. Inside `src/hooks`, create a new file named `useFetch.ts`.
+1.  **Create the file**: Inside the `src` folder, create a new folder named `hooks`. Inside `src/hooks`, create a new file named `useFetch.js`.
 2.  **Define the function**: Export a function named `useFetch`. It should accept one argument: `url` (a string).
-3.  **Make it generic**: The hook should be able to fetch any type of data. Use TypeScript generics (`<T>`) to define the type of the data being fetched. The function signature should look like this: `export function useFetch<T>(url: string)`.
-4.  **Manage State**: Inside the hook, declare three state variables using `useState`:
-    - `data`: To store the fetched data. Initialize it as `null`. Its type should be `T | null`.
-    - `loading`: To track the loading state. Initialize it as `true`. Its type should be `boolean`.
-    - `error`: To store any potential error. Initialize it as `null`. Its type should be `Error | null`.
-5.  **Fetch Data**: Use the `useEffect` hook to perform the data fetching.
+3.  **Manage State**: Inside the hook, declare three state variables using `useState`:
+    - `data`: To store the fetched data. Initialize it as `null`.
+    - `loading`: To track the loading state. Initialize it as `true`.
+    - `error`: To store any potential error. Initialize it as `null`.
+4.  **Fetch Data**: Use the `useEffect` hook to perform the data fetching.
     - The effect should run whenever the `url` prop changes.
     - Inside the effect, define an `async` function to fetch data from the provided `url` using `axios`.
     - Handle the success case: set the fetched data into the `data` state and set `error` to `null`.
     - Handle the error case: catch any errors, store them in the `error` state, and set `data` to `null`.
     - Use a `finally` block to set `loading` to `false` after the fetch attempt is complete (whether it succeeded or failed).
-6.  **Return Values**: The hook should return an object containing the three state variables: `{ data, loading, error }`.
+5.  **Return Values**: The hook should return an object containing the three state variables: `{ data, loading, error }`.
 
 <details>
   <summary>Click for Solution</summary>
 
-```typescript
-// src/hooks/useFetch.ts
-import { useState, useEffect } from "react";
-import axios from "axios";
+```jsx
+// src/hooks/useFetch.js
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
-export function useFetch<T>(url: string) {
-  const [data, setData] = useState<T | null>(null);
+export function useFetch(url) {
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<T>(url);
+        const response = await axios.get(url);
         setData(response.data);
         setError(null);
       } catch (err) {
-        setError(err as Error);
+        setError(err);
         setData(null);
       } finally {
         setLoading(false);
@@ -300,19 +275,15 @@ export function useFetch<T>(url: string) {
 
 ### Iteration 2 - Refactor the `PublicGists` Component
 
-With our `useFetch` hook ready, let's put it to work. For this iteration, you'll be working in **`src/components/PublicGists.tsx`**.
+With our `useFetch` hook ready, let's put it to work. For this iteration, you'll be working in **`src/components/PublicGists.jsx`**.
 
 Your goal is to remove all the manual `useState` and `useEffect` logic for data fetching and replace it with a single call to your new `useFetch` hook.
 
 1.  **Import the hook**: At the top of the file, import your `useFetch` hook: `import { useFetch } from '../hooks/useFetch';`.
-2.  **Call the hook**: Inside the `PublicGists` component, call your hook with the public gists API URL. You'll need to provide the `Gist` type to the hook.
+2.  **Call the hook**: Inside the `PublicGists` component, call your hook with the public gists API URL.
 
-    ```typescript
-    const {
-      data: gists,
-      loading,
-      error,
-    } = useFetch<Gist[]>("https://api.github.com/gists/public");
+    ```jsx
+    const { data: gists, loading, error } = useFetch('https://api.github.com/gists/public');
     ```
 
     > [!NOTE]
@@ -328,23 +299,19 @@ Check your application in the browser. It should still work exactly as before.
 
 ### Iteration 3 - Refactor the `UserGists` Component
 
-To see the true power of reusability, let's refactor the second component. You'll be working in **`src/components/UserGists.tsx`**.
+To see the true power of reusability, let's refactor the second component. You'll be working in **`src/components/UserGists.jsx`**.
 
 1.  **Import the hook**: `import { useFetch } from '../hooks/useFetch';`.
 2.  **Call the hook**: Just like before, replace the `useState` and `useEffect` blocks with a single call to `useFetch`. This time, use the user-specific API endpoint.
 
-    ```typescript
-    const username = "gaearon"; // A famous React developer!
-    const {
-      data: gists,
-      loading,
-      error,
-    } = useFetch<Gist[]>(`https://api.github.com/users/${username}/gists`);
+    ```jsx
+    const username = 'gaearon'; // A famous React developer!
+    const { data: gists, loading, error } = useFetch(`https://api.github.com/users/${username}/gists`);
     ```
 
 3.  **Remove old code**: Delete the now-redundant `useState` and `useEffect` logic and their imports.
 
-You have now refactored two components using the same hook, removing a significant amount of duplicated code. If you ever need to change how data is fetched (e.g., add authentication headers), you only need to change it in one place: `useFetch.ts`.
+You have now refactored two components using the same hook, removing a significant amount of duplicated code. If you ever need to change how data is fetched (e.g., add authentication headers), you only need to change it in one place: `useFetch.js`.
 
 <br>
 
@@ -355,7 +322,7 @@ What happens if a component unmounts while a fetch request is still in progress?
 > [!CAUTION]
 > Forgetting to clean up side effects from `useEffect` is a common source of bugs in React applications. Always consider what should happen if the component unmounts.
 
-Let's make our hook more robust by adding cleanup logic. For this iteration, you'll be working in **`src/hooks/useFetch.ts`** again.
+Let's make our hook more robust by adding cleanup logic. For this iteration, you'll be working in **`src/hooks/useFetch.js`** again.
 
 1.  **Create an AbortController**: Inside the `useEffect` hook (but before your `fetchData` function), create a new `AbortController`.
 2.  **Pass the signal to Axios**: In your `axios.get` call, pass the controller's `signal` in the options object.
@@ -365,15 +332,15 @@ Let's make our hook more robust by adding cleanup logic. For this iteration, you
 <details>
   <summary>Click for Solution</summary>
 
-```typescript
-// src/hooks/useFetch.ts
-import { useState, useEffect } from "react";
-import axios from "axios";
+```jsx
+// src/hooks/useFetch.js
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
-export function useFetch<T>(url: string) {
-  const [data, setData] = useState<T | null>(null);
+export function useFetch(url) {
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const controller = new AbortController(); // 1. Create AbortController
@@ -382,16 +349,16 @@ export function useFetch<T>(url: string) {
       try {
         setLoading(true);
         // 2. Pass signal to axios
-        const response = await axios.get<T>(url, { signal: controller.signal });
+        const response = await axios.get(url, { signal: controller.signal });
         setData(response.data);
         setError(null);
       } catch (err) {
         // 4. Handle cancellation error
         if (axios.isCancel(err)) {
-          console.log("Request canceled:", err.message);
+          console.log('Request canceled:', err.message);
           return;
         }
-        setError(err as Error);
+        setError(err);
         setData(null);
       } finally {
         setLoading(false);
@@ -423,7 +390,7 @@ In many UIs, especially dashboards, sidebars, or FAQs, you'll want to toggle the
 > [!TIP]
 > This is a great example of how **custom hooks promote DRY code** and improve maintainability across multiple components.
 
-You’ll implement this in **`src/hooks/useAccordion.ts`**.
+You’ll implement this in **`src/hooks/useAccordion.js`**.
 
 #### ✅ Your Tasks:
 
@@ -437,14 +404,14 @@ You’ll implement this in **`src/hooks/useAccordion.ts`**.
 <details>
   <summary>Click for Solution</summary>
 
-```ts
-// src/hooks/useAccordion.ts
-import { useState, useCallback } from "react";
+```jsx
+// src/hooks/useAccordion.js
+import { useState, useCallback } from 'react';
 
-export function useAccordion(initialState: boolean = false) {
+export function useAccordion(initialState = false) {
   const [isOpen, setIsOpen] = useState(initialState);
 
-  const toggle = useCallback(() => setIsOpen((prev) => !prev), []);
+  const toggle = useCallback(() => setIsOpen(prev => !prev), []);
   const open = useCallback(() => setIsOpen(true), []);
   const close = useCallback(() => setIsOpen(false), []);
 
@@ -456,9 +423,9 @@ export function useAccordion(initialState: boolean = false) {
 
 #### 🧪 Example Usage:
 
-```tsx
-// src/components/FAQ.tsx
-import { useAccordion } from "../hooks/useAccordion";
+```jsx
+// src/components/FAQ.jsx
+import { useAccordion } from '../hooks/useAccordion';
 
 export function FAQItem() {
   const { isOpen, toggle } = useAccordion();
@@ -466,7 +433,7 @@ export function FAQItem() {
   return (
     <div>
       <button onClick={toggle} aria-expanded={isOpen}>
-        {isOpen ? "Hide Answer" : "Show Answer"}
+        {isOpen ? 'Hide Answer' : 'Show Answer'}
       </button>
       {isOpen && <p>This is the answer to the question.</p>}
     </div>
